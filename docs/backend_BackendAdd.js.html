@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: backend/BackendAdd.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: backend/BackendAdd.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useEffect, useState } from "react";
+import axios from "axios";
+
+/**
+ * Function to add a a new book to a chosen era
+ * @function BackendAdd
+ * @param {object} props
+ * @param {function} props.updateList Function to update list after action
+ * @returns {object} Component to add new post
+ */
+
+const AddPost = (props) => {
+  /**
+   * Values gathered from handleChange function then values used in insertOne function
+   * @typedef values
+   * @type {object}
+   * @property {string} title Book title
+   * @property {string} content Book content
+   * @property {string} author Book author
+   * @property {string} era What era book play out in
+   * @property {string} link Link to buy the book
+   * @property {string} img Image for book cover
+   *
+   */
+  const [values, setValues] = useState();
+  /**
+   * Retrived from collection in database
+   * @typedef {object}
+   */
+  const [eras, setEras] = useState([]);
+  /**
+   * Function to post data to
+   * @function insertOne
+   * @param {object} e Click event
+   * @param {function} e.preventDefault -Prevents default behaviour of submit button
+   */
+  const insertOne = (e) => {
+    e.preventDefault();
+    /**
+     * Post request
+     * @function axios
+     * @property {object} data
+     * @property {string} data.title
+     */
+    axios({
+      method: "post",
+      url: "http://localhost:3001/api/post",
+      data: {
+        title: values.title,
+        content: values.content,
+        author: values.author,
+        era: values.era,
+        link: values.link,
+        image: values.image,
+      },
+    });
+    props.updateList();
+  };
+
+  /**
+   * Fetch eras with axios
+   * @function fetch eras
+   */
+  useEffect(() => {
+    axios({
+      url: "http://localhost:3001/api/eras",
+      method: "get",
+      headers: { "Content-type": "application/json" },
+    }).then((response) => {
+      setEras(response.data);
+    });
+  }, []);
+  /**
+   * A function to grab data from text fields
+   * @function handleChange
+   * @param {object} e Target event for gathering values
+   */
+  const handleChange = (e) => {
+    setValues({ ...values, [e.target.name]: e.target.value });
+  };
+  return (
+    &lt;form className="text-light bg-primary" style={{ padding: "20px" }}>
+      &lt;div className="form-group">
+        &lt;label className="form-label" htmlFor="title">
+          Title:
+        &lt;/label>
+        &lt;input
+          className="form-input"
+          name="title"
+          onChange={handleChange}
+        >&lt;/input>
+      &lt;/div>
+      &lt;div className="form-group">
+        &lt;label className="form-label" htmlFor="author">
+          Author:
+        &lt;/label>
+        &lt;input
+          className="form-input"
+          name="author"
+          onChange={handleChange}
+        >&lt;/input>
+      &lt;/div>
+      &lt;div className="form-group">
+        &lt;label className="form-label" htmlFor="content">
+          Content:
+        &lt;/label>
+        &lt;textarea
+          className="form-input"
+          name="content"
+          onChange={handleChange}
+          row="2"
+        >&lt;/textarea>
+      &lt;/div>
+      &lt;div className="form-group">
+        &lt;label className="form-label" htmlFor="era">
+          Era:
+        &lt;/label>
+        &lt;select
+          className="form-select"
+          id="era"
+          onChange={handleChange}
+          name="era"
+        >
+          {" "}
+          {eras.map((era) => (
+            &lt;option value={era.title}>{era.title}&lt;/option>
+          ))}
+        &lt;/select>
+      &lt;/div>
+      &lt;div className="form-group">
+        &lt;label className="form-label" htmlFor="link">
+          Link:
+        &lt;/label>
+        &lt;input
+          className="form-input"
+          name="link"
+          type="link"
+          onChange={handleChange}
+        >&lt;/input>
+      &lt;/div>
+      &lt;div className="form-group">
+        &lt;label className="form-label" htmlFor="image">
+          Link:
+        &lt;/label>
+        &lt;input
+          className="form-input"
+          name="image"
+          onChange={handleChange}
+        >&lt;/input>
+      &lt;/div>
+      &lt;button className="btn bg-success text-light" onClick={insertOne}>
+        Add new
+      &lt;/button>
+    &lt;/form>
+  );
+};
+
+export default AddPost;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#axios">axios</a></li><li><a href="global.html#Backend">Backend</a></li><li><a href="global.html#BackendAdd">BackendAdd</a></li><li><a href="global.html#BackendEntry">BackendEntry</a></li><li><a href="global.html#Books">Books</a></li><li><a href="global.html#callInfo">callInfo</a></li><li><a href="global.html#data">data</a></li><li><a href="global.html#delay">delay</a></li><li><a href="global.html#fetcheras">fetch eras</a></li><li><a href="global.html#handleChange">handleChange</a></li><li><a href="global.html#handleDelete">handleDelete</a></li><li><a href="global.html#handleEdit">handleEdit</a></li><li><a href="global.html#handleInfoUsedtosendbooksupstate">handleInfo Used to send  books upstate</a></li><li><a href="global.html#handleUpdate">handleUpdate</a></li><li><a href="global.html#insertOne">insertOne</a></li><li><a href="global.html#Main">Main</a></li><li><a href="global.html#MainInfo">MainInfo</a></li><li><a href="global.html#update">update</a></li><li><a href="global.html#updateData">updateData</a></li><li><a href="global.html#useEffect">useEffect</a></li><li><a href="global.html#useEffectGatherseras">useEffect Gathers eras</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.10</a> on Wed May 25 2022 14:09:03 GMT+0200 (Central European Summer Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

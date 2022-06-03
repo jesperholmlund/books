@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: backend/BackendEntry.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: backend/BackendEntry.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useState } from "react";
+import axios from "axios";
+
+/**
+ * Component for entires in database
+ * @function BackendEntry
+ * @param {object} props
+ * @param {function} props.updateList
+ * @param {number} props._id
+ * @returns {Object}
+ */
+const BackendEntry = (props) => {
+  /**
+   * @typedef {boolean} edit Toogle between edit and reading mode
+   * @example Clicking on an edit button will change content from uneditable to editable
+   */
+  const [edit, setEdit] = useState(false);
+  /**
+   * Values from props that are used in rendering the component
+   * @typedef {object} values
+   * @property {string} title From props.title
+   * @property {string} content From props.content
+   * @property {string} author From props.author
+   * @property {string} era From props.era
+   * @property {string} link From props.link
+   * @property {string} img From props.img
+   *
+   */
+  const [values, setValues] = useState({
+    title: props.title,
+    content: props.content,
+    author: props.author,
+    link: props.link,
+    era: props.era,
+    image: props.image,
+  });
+  /**
+   * Deletes record from database
+   * @function handleDelete
+   */
+  const handleDelete = () => {
+    axios({
+      method: "delete",
+      url: "http://localhost:3001/api/delete/" + props.id,
+    });
+    props.updateList();
+  };
+  /**
+   * Updating a record. Gathers data from values, sends data, updates list
+   * @function handleUpdate
+   *
+   */
+  const handleUpdate = () => {
+    axios({
+      url: "http://localhost:3001/api/update/" + props.id,
+      method: "put",
+      data: {
+        title: values.title,
+        content: values.content,
+        author: values.author,
+        link: values.link,
+        image: values.image,
+      },
+    });
+    props.updateList();
+    setEdit(!edit);
+  };
+  /** Bind values from textfields and put them in values variable
+   * @function handleChange
+   * @param {event} e Target event for targeting valueb and name from textfields
+   */
+  const handleChange = (e) => {
+    setValues({ ...values, [e.target.name]: e.target.value });
+  };
+  /**
+   * Function to toggle edit or read mode
+   * @function handleEdit
+   */
+  const handleEdit = () => {
+    setEdit(!edit);
+  };
+  return (
+    &lt;div className="card">
+      {edit === false ? (
+        &lt;>
+          &lt;div className="card-header">
+            &lt;div className="card-title h5">{props.title}&lt;/div>
+            &lt;div
+              className="card-image bg-secondary p-centered"
+              style={{ margin: "auto" }}
+            >
+              &lt;img
+                src={props.image}
+                className="img-responsive p-centered"
+                alt=""
+              >&lt;/img>
+            &lt;/div>
+          &lt;/div>
+          &lt;div className="card-body">
+            &lt;span className="card-text">{props.content}&lt;/span>
+          &lt;/div>
+          &lt;div className="card-footer">
+            &lt;span className="chip">{props.era}&lt;/span>
+            &lt;span className="chip">{props.author}&lt;/span>
+            &lt;a href={props.link}>
+              &lt;span className="chip">Link&lt;/span>
+            &lt;/a>
+          &lt;/div>
+        &lt;/>
+      ) : (
+        &lt;div className="card-body">
+          &lt;form>
+            &lt;div className="form-group">
+              &lt;input
+                className="form-input"
+                name={"title"}
+                defaultValue={props.title}
+                onChange={handleChange}
+              >&lt;/input>
+            &lt;/div>
+            &lt;div className="form-group">
+              &lt;textarea
+                className="form-input"
+                row="2"
+                name={"content"}
+                defaultValue={props.content}
+                onChange={handleChange}
+              >&lt;/textarea>
+            &lt;/div>
+            &lt;div className="form-group">
+              &lt;input
+                className="form-input"
+                name={"author"}
+                defaultValue={props.author}
+                onChange={handleChange}
+              >&lt;/input>
+            &lt;/div>
+            &lt;div className="form-group">
+              &lt;input
+                className="form-input"
+                name={"link"}
+                defaultValue={props.link}
+                onChange={handleChange}
+              >&lt;/input>
+            &lt;/div>
+            &lt;div className="form-group">
+              &lt;input
+                className="form-input"
+                name={"image"}
+                defaultValue={props.image}
+                onChange={handleChange}
+              >&lt;/input>
+            &lt;/div>
+          &lt;/form>
+        &lt;/div>
+      )}
+      &lt;div className="card-footer">
+        &lt;a
+          className="card-link"
+          onClick={handleDelete}
+          style={{ cursor: "pointer" }}
+        >
+          Delete
+        &lt;/a>{" "}
+        {edit === false ? (
+          &lt;a
+            className="card-link"
+            onClick={handleEdit}
+            style={{ cursor: "pointer" }}
+          >
+            Edit
+          &lt;/a>
+        ) : (
+          &lt;>
+            &lt;a
+              onClick={handleUpdate}
+              className="card-link"
+              style={{ cursor: "pointer" }}
+            >
+              Update
+            &lt;/a>{" "}
+            &lt;a
+              onClick={handleEdit}
+              className="card-link"
+              style={{ cursor: "pointer" }}
+            >
+              Cancel
+            &lt;/a>
+          &lt;/>
+        )}
+      &lt;/div>
+    &lt;/div>
+  );
+};
+
+export default BackendEntry;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#axios">axios</a></li><li><a href="global.html#Backend">Backend</a></li><li><a href="global.html#BackendAdd">BackendAdd</a></li><li><a href="global.html#BackendEntry">BackendEntry</a></li><li><a href="global.html#Books">Books</a></li><li><a href="global.html#callInfo">callInfo</a></li><li><a href="global.html#data">data</a></li><li><a href="global.html#delay">delay</a></li><li><a href="global.html#fetcheras">fetch eras</a></li><li><a href="global.html#handleChange">handleChange</a></li><li><a href="global.html#handleDelete">handleDelete</a></li><li><a href="global.html#handleEdit">handleEdit</a></li><li><a href="global.html#handleInfoUsedtosendbooksupstate">handleInfo Used to send  books upstate</a></li><li><a href="global.html#handleUpdate">handleUpdate</a></li><li><a href="global.html#insertOne">insertOne</a></li><li><a href="global.html#Main">Main</a></li><li><a href="global.html#MainInfo">MainInfo</a></li><li><a href="global.html#update">update</a></li><li><a href="global.html#updateData">updateData</a></li><li><a href="global.html#useEffect">useEffect</a></li><li><a href="global.html#useEffectGatherseras">useEffect Gathers eras</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.10</a> on Wed May 25 2022 14:09:03 GMT+0200 (Central European Summer Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
